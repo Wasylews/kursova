@@ -8,10 +8,10 @@ CFLAGS = /z /zi
 LDFLAGS = /v
 
 BUILD_DIR = build
-INCLUDE_DIR = libasm
+INCLUDE_DIR = libasm\libasm
 
 
-all: test.exe
+all: main.exe
 
 
 .asm.obj:

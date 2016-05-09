@@ -5,4 +5,7 @@ Kursach.doc
 tools/*
 
 # ignore dosbox config
-dobox.cong
+dosbox.conf
+
+# ignore build folder
+BUILD/*
