@@ -1,2 +1,8 @@
 # ignore documentation
 Kursach.doc
+
+# ignore tools
+tools/*
+
+# ignore dosbox config
+dobox.cong
