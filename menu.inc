@@ -8,7 +8,7 @@ main_menu db '1) Show all records', ENDL
           db '7) Exit', ENDL
           db 'Choose what to do: ', 0
 
-main_menu_error db ENDL, 'Wrong input. Try again: ', 0
+main_menu_error db 'Wrong input. Try again: ', 0
 
 .code
 
@@ -18,6 +18,9 @@ show_main_menu proc c
 
 @@repeat_input:
     getc
+    push ax
+    putc ENDL
+    pop ax
 
     cmp al, '1'
     jb @@wrong_input        ; if al < '1'
