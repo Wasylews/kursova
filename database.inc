@@ -11,7 +11,6 @@ book_count dd 0
 ; price dd 0.0
 
 .code
-include stdio.inc
 
 ; db_show_table(FILE handle)
 db_show_table proc c

@@ -11,7 +11,6 @@ main_menu db '1) Show all records', ENDL
 main_menu_error db ENDL, 'Wrong input. Try again: ', 0
 
 .code
-include stdio.inc
 
 ; int show_main_menu() -> al
 show_main_menu proc c

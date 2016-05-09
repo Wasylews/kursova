@@ -5,14 +5,15 @@
 
 LOCALS
 
-include menu.inc
-include database.inc
-
 .data
 filename db 'db.txt', 0
 handle dw ?
 
 .code
+
+include stdio.inc
+include menu.inc
+include database.inc
 
 main proc c
     mov ax, @data
