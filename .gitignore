@@ -9,3 +9,6 @@ dosbox.conf
 
 # ignore build folder
 BUILD/*
+
+# ignore database file
+db.txt
