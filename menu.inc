@@ -41,16 +41,17 @@ read_int proc c
 read_int endp
 
 
-; int show_main_menu() -> al
-show_main_menu proc c
-    puts main_menu
+; int range_check_input(char *prompt, int min, int max) -> al
+range_check_input macro prompt: req, min: req, max:req
+ifnb <prompt, min, max>
+    puts prompt
 @@repeat_input:
     call read_int
 
-    cmp al, 1
+    cmp al, min
     jb @@wrong_input        ; if al < 1
 
-    cmp al, 7
+    cmp al, max
     jbe @@return            ; al <= 7
 
 @@wrong_input:
@@ -58,6 +59,13 @@ show_main_menu proc c
     jmp @@repeat_input
 
 @@return:
+endif
+endm
+
+
+; int show_main_menu() -> al
+show_main_menu proc c
+    range_check_input main_menu 1 7
     ret
 show_main_menu endp
 
@@ -89,8 +97,8 @@ show_table endp
 remove_record proc c
     arg @handle
 
-    puts enter_record_num
-    call read_int
+    ; TODO: calculate record count
+    range_check_input enter_record_num 1 99
 
     push @handle
     push ax
@@ -106,8 +114,7 @@ search_record proc c
     arg @handle
     local @@temp
 
-    puts column_prompt
-    call read_int
+    range_check_input column_prompt 1 7
 
     puts filter_by
     push @@temp
@@ -129,8 +136,7 @@ sort_record proc c
     arg @handle
     local @@temp
 
-    puts column_prompt
-    call read_int
+    range_check_input column_prompt 1 7
 
     push @handle
     push ax
@@ -170,6 +176,9 @@ add_record endp
 edit_record proc c
     arg @handle
     local @@temp
+
+    ; TODO: calculate record count(same as in remove_record)
+    range_check_input enter_record_num 1 99
 
     ; TODO: see add_record
     ret
