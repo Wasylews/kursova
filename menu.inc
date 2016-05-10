@@ -85,7 +85,6 @@ show_table proc c
     je @@done
 
     ; TODO: print record
-    ; puts @@record
     jmp @@read_loop
 
 @@done:
