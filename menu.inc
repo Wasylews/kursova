@@ -16,8 +16,15 @@ filter_by db 'Filter by: ', 0
 column_prompt db '1) Author', ENDL
               db '2) Title', ENDL
               db '3) Genre', ENDL
+              db '4) Publisher', ENDL
+              db '5) Year', ENDL
+              db '6) Pages count', ENDL
+              db '5) Price', ENDL
               db 'Choose column: ', 0
+
 .code
+
+include database.inc
 
 ; inr read_int() -> ax
 read_int proc c
@@ -70,6 +77,9 @@ show_table proc c
     je @@done
 
     ; TODO: print record
+    ; puts @@record
+    jmp @@read_loop
+
 @@done:
     ret
 show_table endp
@@ -131,11 +141,26 @@ sort_record proc c
 sort_record endp
 
 
+; input_record(book *p)
+input_record proc c
+    arg @p
+
+    push @p
+    call gets
+    add sp, 2
+
+    ret
+input_record endp
+
+
 ; add_record(FILE handle)
 add_record proc c
     arg @handle
     local @@temp
 
+    push @@temp
+    call input_record
+    add sp, 2
     ; TODO: input author, title, genre etc from keyboard
     ret
 add_record endp

@@ -13,7 +13,6 @@ handle dw ?
 
 include stdio.inc
 include menu.inc
-include database.inc
 
 main proc c
     mov ax, @data
