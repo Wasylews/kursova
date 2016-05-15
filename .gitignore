@@ -1,14 +1,14 @@
 # ignore documentation
-Kursach.doc
+doc/
 
 # ignore tools
-tools/*
+tools/
 
 # ignore dosbox config
 dosbox.conf
 
 # ignore build folder
-BUILD/*
+BUILD/
 
 # ignore database file
 db.txt
