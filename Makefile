@@ -10,8 +10,9 @@ LDFLAGS = /v
 BUILD_DIR = build
 INCLUDE_DIR = libasm\libasm
 
-
-all: main.exe
+# sometimes dosbox try create obj file with wrong path
+# quick and dirty fix is always clean build folder before
+all: clean main.exe
 
 
 .asm.obj:

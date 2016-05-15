@@ -3,22 +3,38 @@
 
 .stack 256h
 
-LOCALS
-
 .data
 filename db 'db.txt', 0
+
+record_count dw ?
 handle dw ?
 
-.code
+book struc
+    m_author db 20 dup ('?')
+    m_title db 50 dup ('?')
+    m_genre db 20 dup ('?')
+    m_publisher db 30 dup ('?')
 
+    m_year dw ?
+    m_pages_count dw ?
+    m_price dd ?
+book ends
+
+
+database book 100 dup(<>)
+
+.code
+LOCALS
 include stdio.inc
+include record.inc
+include database.inc
 include menu.inc
 
 main proc c
     mov ax, @data
     mov ds, ax
 
-    push RW
+    push RO
     push offset filename
     call fopen
     add sp, 4
@@ -34,6 +50,17 @@ main proc c
 
 @@open_success:
     mov handle, ax
+
+    push offset database
+    push handle
+    call db_fetch
+    add sp, 4
+
+    mov record_count, ax
+
+    push handle
+    call fclose
+    add sp, 2
 
 @@main_loop:
     call show_main_menu
@@ -58,53 +85,41 @@ main proc c
     je @@sort_data
 
     cmp al, 7
-    je @@exit
+    je @@quit
 
 @@show_data:
-    push handle
+    push record_count
+    push offset database
     call show_table
-    add sp, 2
+    add sp, 4
     jmp @@break
 
 @@add_data:
-    push handle
-    call add_record
-    add sp, 2
+    ; TODO
     jmp @@break
 
 @@remove_data:
-    push handle
-    call remove_record
-    add sp, 2
+    ; TODO
     jmp @@break
 
 @@edit_data:
-    push handle
-    call edit_record
-    add sp, 2
+    ; TODO
     jmp @@break
 
 @@search_data:
-    push handle
-    call search_record
-    add sp, 2
+    ; TODO
     jmp @@break
 
 @@sort_data:
-    push handle
-    call sort_record
-    add sp, 2
+    ; TODO
     jmp @@break
 
 @@break:
     jmp @@main_loop
 
-@@exit:
-    push handle
-    call fclose
-    add sp, 2
-
+@@quit:
     _exit
 main endp
 
 end main
+

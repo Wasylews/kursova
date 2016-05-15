@@ -23,24 +23,6 @@ column_prompt db '1) Author', ENDL
               db 'Choose column: ', 0
 
 .code
-
-include database.inc
-
-; inr read_int() -> ax
-read_int proc c
-    local @@temp
-
-    push @@temp
-    call gets
-    add sp, 2
-
-    push @@temp
-    call atoi
-    add sp, 2
-    ret
-read_int endp
-
-
 ; int range_check_input(char *prompt, int min, int max) -> al
 range_check_input macro prompt: req, min: req, max:req
 ifnb <prompt, min, max>
@@ -48,10 +30,10 @@ ifnb <prompt, min, max>
 @@repeat_input:
     call read_int
 
-    cmp al, min
+    cmp ax, min
     jb @@wrong_input        ; if al < 1
 
-    cmp al, max
+    cmp ax, max
     jbe @@return            ; al <= 7
 
 @@wrong_input:
@@ -70,115 +52,23 @@ show_main_menu proc c
 show_main_menu endp
 
 
-; show_table(FILE handle)
+; show_table(book *database, const int n)
 show_table proc c
-    arg @handle
-    local @@record
+    arg @database, @n
+    uses bx, si, cx
 
-@@read_loop:
-    push @handle
-    push @@record
-    call db_read_record
-    add sp, 4
+    mov cx, @n
 
-    cmp ax, 0
-    je @@done
+    mov bx, type book
+    mov si, @database
 
-    ; TODO: print record
-    jmp @@read_loop
+@@print_loop:
+    push si
+    call print_record
+    add sp, 2
 
-@@done:
+    add si, bx
+    loop @@print_loop
+
     ret
 show_table endp
-
-
-; remove_record(FILE handle)
-remove_record proc c
-    arg @handle
-
-    ; TODO: calculate record count
-    range_check_input enter_record_num 1 99
-
-    push @handle
-    push ax
-    call db_remove_record
-    add sp, 4
-
-    ret
-remove_record endp
-
-
-; search_record(FILE handle)
-search_record proc c
-    arg @handle
-    local @@temp
-
-    range_check_input column_prompt 1 7
-
-    puts filter_by
-    push @@temp
-    call gets
-    add sp, 2
-
-    push @handle
-    push @@temp
-    push ax
-    call db_search_record
-    add sp, 6
-
-    ret
-search_record endp
-
-
-; sort_record(FILE handle)
-sort_record proc c
-    arg @handle
-    local @@temp
-
-    range_check_input column_prompt 1 7
-
-    push @handle
-    push ax
-    call db_sort_record
-    add sp, 6
-
-    ret
-sort_record endp
-
-
-; input_record(book *p)
-input_record proc c
-    arg @p
-
-    push @p
-    call gets
-    add sp, 2
-
-    ret
-input_record endp
-
-
-; add_record(FILE handle)
-add_record proc c
-    arg @handle
-    local @@temp
-
-    push @@temp
-    call input_record
-    add sp, 2
-    ; TODO: input author, title, genre etc from keyboard
-    ret
-add_record endp
-
-
-; edit_record(FILE handle)
-edit_record proc c
-    arg @handle
-    local @@temp
-
-    ; TODO: calculate record count(same as in remove_record)
-    range_check_input enter_record_num 1 99
-
-    ; TODO: see add_record
-    ret
-edit_record endp

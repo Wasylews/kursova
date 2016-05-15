@@ -161,7 +161,7 @@ gets proc c
 gets endp
 
 
-; int fgets(char *s, int size, FILE handle)
+; int fgets(char *s, int size, FILE handle) -> ax
 fgets proc c
     arg @s, @size, @handle
     uses si, cx

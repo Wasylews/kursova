@@ -374,7 +374,6 @@ memcpy proc c
 	dec cx
 	jmp @@cycle
 @@end:
-	add sp, 4
 	mov ax, @dest
 	ret
 memcpy endp
@@ -391,7 +390,7 @@ memmove proc c
 	push @src
 	push bx
 	call memcpy
-	add sp, 4
+	add sp, 6
 	push bx
 	push @dest
 	call memcpy
