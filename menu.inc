@@ -61,7 +61,7 @@ show_table proc c
 
     mov bx, type book
     mov si, @database
-
+    ; FIXME: loop doesn't stop?
 @@print_loop:
     push si
     call print_record
@@ -69,6 +69,5 @@ show_table proc c
 
     add si, bx
     loop @@print_loop
-
     ret
 show_table endp
