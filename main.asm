@@ -5,15 +5,16 @@
 
 .data
 filename db 'db.txt', 0
+error db 'Cannot open database', 0
 
 record_count dw ?
 handle dw ?
 
 book struc
-    m_author db 20 dup ('?')
+    m_author db 50 dup ('?')
     m_title db 50 dup ('?')
-    m_genre db 20 dup ('?')
-    m_publisher db 30 dup ('?')
+    m_genre db 50 dup ('?')
+    m_publisher db 50 dup ('?')
 
     m_year dw ?
     m_pages_count dw ?
@@ -43,7 +44,7 @@ main proc c
     jne @@open_success
 
 
-    puts filename
+    puts error
     push EXIT_FAILURE
     call exit
     add sp, 2
