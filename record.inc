@@ -43,38 +43,38 @@ print_float endp
 ; print_record(book rec)
 print_record proc c
     arg @rec
-    uses si, di
+    uses di, dx
 
-    mov si, @rec
+    mov di, @rec
 
-    lea di, [si].m_author
-    puts di
+    lea dx, [di].m_author
+    puts dx
     puts sep
 
-    lea di, [si].m_title
-    puts di
+    lea dx, [di].m_title
+    puts dx
     puts sep
 
-    lea di, [si].m_genre
-    puts di
+    lea dx, [di].m_genre
+    puts dx
     puts sep
 
-    lea di, [si].m_publisher
-    puts di
+    lea dx, [di].m_publisher
+    puts dx
     puts sep
 
-    push [si].m_year
+    push [di].m_year
     call print_int
     add sp, 2
     puts sep
 
-    push [si].m_pages_count
+    push [di].m_pages_count
     call print_int
     add sp, 2
     puts sep
 
-    lea di, [si].m_price
-    push di
+    lea dx, [di].m_price
+    push dx
     call print_float
     add sp, 2
 
@@ -207,7 +207,7 @@ get_field endp
 ; parse_record(const char *rec, book *dest)
 parse_record proc c
     arg @rec, @dest
-    uses si, di, bx
+    uses si, di, bx, cx
     local @@temp: byte: 5
 
     mov si, @dest
@@ -235,7 +235,6 @@ parse_record proc c
     push 2
     call get_field
     add sp, 6
-
 
     ; get publisher
     lea di, [si].m_publisher

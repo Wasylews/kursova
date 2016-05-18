@@ -7,6 +7,10 @@ MKDIR = mkdir
 CFLAGS = /z /zi
 LDFLAGS = /v
 
+# CFLAGS =
+# LDFLAGS =
+
+
 BUILD_DIR = build
 INCLUDE_DIR = libasm\libasm
 

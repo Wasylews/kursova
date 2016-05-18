@@ -55,19 +55,17 @@ show_main_menu endp
 ; show_table(book *database, const int n)
 show_table proc c
     arg @database, @n
-    uses bx, si, cx
-
+    uses dx, si, cx
     mov cx, @n
 
-    mov bx, type book
+    mov dx, type book
     mov si, @database
-    ; FIXME: loop doesn't stop?
 @@print_loop:
     push si
     call print_record
     add sp, 2
 
-    add si, bx
+    add si, dx
     loop @@print_loop
     ret
 show_table endp

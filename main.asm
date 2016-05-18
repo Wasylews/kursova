@@ -7,7 +7,7 @@
 filename db 'db.txt', 0
 error db 'Cannot open database', 0
 
-record_count dw ?
+db_size dw 0
 handle dw ?
 
 book struc
@@ -57,7 +57,7 @@ main proc c
     call db_fetch
     add sp, 4
 
-    mov record_count, ax
+    mov db_size, ax
 
     push handle
     call fclose
@@ -89,7 +89,7 @@ main proc c
     je @@quit
 
 @@show_data:
-    push record_count
+    push db_size
     push offset database
     call show_table
     add sp, 4
