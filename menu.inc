@@ -8,7 +8,7 @@ main_menu db '1) Show all records', ENDL
           db '7) Exit', ENDL
           db 'Choose what to do: ', 0
 
-main_menu_error db 'Wrong input. Try again: ', 0
+record_removed db 'Cannot process removed record.', ENDL, 0
 error_fmt db 'Wrong input. Enter number from %d to %d: ', 0
 
 enter_record_num db 'Enter record number: ', 0
@@ -93,11 +93,15 @@ filter_record proc c
     mov dx, type book
     mov si, @database
 @@filter_loop:
-    ; TODO: strcmp([si].column, what)
+    cmp [si].removed, 1
+    je @@skip
+
+; TODO: strcmp([si].column, what)
     push si
     call print_record
     add sp, 2
 
+@@skip:
     add si, dx
     loop @@filter_loop
     ret
@@ -153,6 +157,12 @@ remove_record proc c
     mov si, @database
     add si, ax
 
+    cmp [si].removed, 1
+    jne @@valid_record
+    puts record_removed
+    jmp @@cancel
+
+@@valid_record:
     push si
     call print_record
     add sp, 2
@@ -189,6 +199,12 @@ edit_record proc c
     mov si, @database
     add si, ax
 
+    cmp [si].removed, 1
+    jne @@valid_record
+    puts record_removed
+    jmp @@exit
+
+@@valid_record:
     push si
     call print_record
     add sp, 2
@@ -196,5 +212,7 @@ edit_record proc c
     push si
     call read_record
     add sp, 2
+
+@@exit:
     ret
 edit_record endp
