@@ -48,7 +48,13 @@ endm
 ; putc(char c) -> al
 putc macro c: req
 ifnb <c>
-    fputc c STDOUT
+    push dx
+
+    mov ah, 06h
+    mov dl, c
+    int 21h
+
+    pop dx
 endif
 endm
 
