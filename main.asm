@@ -70,7 +70,11 @@ main proc c
 
 @@main_loop:
     ; show main menu
-    range_check_input main_menu 1 7
+    push 7
+    push 1
+    push offset main_menu
+    call range_check_input
+    add sp, 6
 
     ; switch al
     cmp al, 1               ; case 1

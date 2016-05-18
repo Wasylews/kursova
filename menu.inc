@@ -9,6 +9,7 @@ main_menu db '1) Show all records', ENDL
           db 'Choose what to do: ', 0
 
 main_menu_error db 'Wrong input. Try again: ', 0
+error_fmt db 'Wrong input. Enter number from %d to %d: ', 0
 
 enter_record_num db 'Enter record number: ', 0
 filter_by db 'Filter by: ', 0
@@ -30,25 +31,34 @@ temp db 80 dup('?')
 
 .code
 ; int range_check_input(char *prompt, int min, int max) -> al
-range_check_input macro prompt: req, min: req, max:req
-ifnb <prompt, min, max>
-    puts prompt
+range_check_input proc c
+    arg @prompt, @min, @max
+    uses dx
+
+    mov dx, @prompt
+    puts dx
+
 @@repeat_input:
     call read_int
 
-    cmp ax, min
+    cmp ax, @min
     jb @@wrong_input        ; if al < 1
 
-    cmp ax, max
+    cmp ax, @max
     jbe @@return            ; al <= 7
 
 @@wrong_input:
-    puts main_menu_error
+    push @max
+    push @min
+    push offset error_fmt
+    push STDOUT
+    call fprintf
+    add sp, 8
     jmp @@repeat_input
 
 @@return:
-endif
-endm
+    ret
+range_check_input endp
 
 
 ; show_table(book *database, const int n)
@@ -96,7 +106,13 @@ search_record proc c
     local @@column
     uses si
 
-    range_check_input column_prompt 1 5
+    ; ask user in which column to search
+    push 5
+    push 1
+    push offset column_prompt
+    call range_check_input
+    add sp, 6
+
     mov @@column, ax
 
     puts filter_by
@@ -121,7 +137,12 @@ remove_record proc c
     arg @database, @n
     uses dx, si
 
-    range_check_input enter_record_num 0 @n
+    ; ask for a record id
+    push @n
+    push 0
+    push offset enter_record_num
+    call range_check_input
+    add sp, 6
 
     mov dx, type book
     mul dx
@@ -132,7 +153,13 @@ remove_record proc c
     call print_record
     add sp, 2
 
-    range_check_input remove_prompt 1 2
+    ; confrim removing
+    push 2
+    push 1
+    push offset remove_prompt
+    call range_check_input
+    add sp, 6
+
     cmp ax, 1
     jne @@cancel
     ; TODO: mark database[n] as removed, teach show_table skip such records
@@ -146,7 +173,11 @@ edit_record proc c
     arg @database, @n
     uses dx, si
 
-    range_check_input enter_record_num 0 @n
+    push @n
+    push 0
+    push offset enter_record_num
+    call range_check_input
+    add sp, 6
 
     mov dx, type book
     mul dx
