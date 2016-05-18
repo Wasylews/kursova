@@ -19,6 +19,8 @@ book struc
     m_year dw ?
     m_pages_count dw ?
     m_price dd ?
+
+    removed db 0
 book ends
 
 

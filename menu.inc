@@ -70,10 +70,14 @@ show_table proc c
     mov dx, type book
     mov si, @database
 @@print_loop:
+    cmp [si].removed, 1
+    je @@skip
+
     push si
     call print_record
     add sp, 2
 
+@@skip:
     add si, dx
     loop @@print_loop
     ret
@@ -162,7 +166,8 @@ remove_record proc c
 
     cmp ax, 1
     jne @@cancel
-    ; TODO: mark database[n] as removed, teach show_table skip such records
+
+    mov [si].removed, 1
 @@cancel:
     ret
 remove_record endp
