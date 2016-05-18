@@ -96,7 +96,6 @@ search_record proc c
     mov @@column, ax
 
     puts filter_by
-
     lea si, temp
     push si
     call gets
@@ -111,6 +110,7 @@ search_record proc c
 
     ret
 search_record endp
+
 
 ; remove_record(book *database, const int n)
 remove_record proc c

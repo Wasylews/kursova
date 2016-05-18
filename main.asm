@@ -26,6 +26,7 @@ database book 100 dup(<>)
 
 .code
 LOCALS
+
 include stdio.inc
 include record.inc
 include database.inc
@@ -35,15 +36,17 @@ main proc c
     mov ax, @data
     mov ds, ax
 
+    ; open database file for read
     push RO
     push offset filename
     call fopen
     add sp, 4
 
+    ; check for errors
     cmp ax, 0
     jne @@open_success
 
-
+    ; if can't open file print error and exit
     puts error
     push EXIT_FAILURE
     call exit
@@ -52,6 +55,7 @@ main proc c
 @@open_success:
     mov handle, ax
 
+    ; read file into book array
     push offset database
     push handle
     call db_fetch
@@ -59,11 +63,13 @@ main proc c
 
     mov db_size, ax
 
+    ; file is no longer needed, close it
     push handle
     call fclose
     add sp, 2
 
 @@main_loop:
+    ; show main menu
     range_check_input main_menu 1 7
 
     ; switch al
@@ -89,6 +95,7 @@ main proc c
     je @@quit
 
 @@show_data:
+    ; print all records
     push db_size
     push offset database
     call show_table
@@ -100,6 +107,7 @@ main proc c
     jmp @@break
 
 @@remove_data:
+    ; remove record by number
     push db_size
     push offset database
     call remove_record
@@ -107,12 +115,14 @@ main proc c
     jmp @@break
 
 @@edit_data:
+    ; edit selected record
     push db_size
     push offset database
     call edit_record
     jmp @@break
 
 @@search_data:
+    ; print records, that match with search string
     push db_size
     push offset database
     call search_record

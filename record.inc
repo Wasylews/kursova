@@ -137,7 +137,6 @@ read_record proc c
     mov si, @rec
 
     puts p_author
-
     lea di, [si].m_author
     push di
     call gets
