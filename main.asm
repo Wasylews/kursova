@@ -107,7 +107,9 @@ main proc c
     jmp @@break
 
 @@edit_data:
-    ; TODO
+    push db_size
+    push offset database
+    call edit_record
     jmp @@break
 
 @@search_data:

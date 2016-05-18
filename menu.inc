@@ -120,3 +120,13 @@ remove_record proc c
     ; TODO: mark database[n] as removed, teach show_table skip such records
     ret
 remove_record endp
+
+
+; edit_record(book *database, const int n)
+edit_record proc c
+    arg @database, @n
+    range_check_input enter_record_num 0 @n
+
+    ; TODO: print_record(n) and read_record(n)
+    ret
+edit_record endp
