@@ -13,6 +13,10 @@ main_menu_error db 'Wrong input. Try again: ', 0
 enter_record_num db 'Enter record number: ', 0
 filter_by db 'Filter by: ', 0
 
+remove_prompt db '1) Yes', ENDL
+              db '2) No', ENDL
+              db 'Remove? ', 0
+
 column_prompt db '1) Author', ENDL
               db '2) Title', ENDL
               db '3) Genre', ENDL
@@ -124,7 +128,15 @@ remove_record proc c
     mov si, @database
     add si, ax
 
+    push si
+    call print_record
+    add sp, 2
+
+    range_check_input remove_prompt 1 2
+    cmp ax, 1
+    jne @@cancel
     ; TODO: mark database[n] as removed, teach show_table skip such records
+@@cancel:
     ret
 remove_record endp
 
