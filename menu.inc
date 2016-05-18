@@ -111,8 +111,7 @@ filter_record endp
 ; search_record(book *database, const int n)
 search_record proc c
     arg @database, @n
-    local @@column
-    uses si
+    uses si, cx
 
     ; ask user in which column to search
     push 5
@@ -121,7 +120,7 @@ search_record proc c
     call range_check_input
     add sp, 6
 
-    mov @@column, ax
+    mov cx, ax
 
     puts filter_by
     lea si, temp
@@ -132,7 +131,7 @@ search_record proc c
     push @n
     push @database
     push si
-    push @@column
+    push cx
     call filter_record
     add sp, 8
 
@@ -216,3 +215,21 @@ edit_record proc c
 @@exit:
     ret
 edit_record endp
+
+
+; add_record(book *database, const int n)
+add_record proc c
+    arg @database, @n
+    uses dx, si
+
+    mov ax, @n
+    mov dx, type book
+    mul dx
+    mov si, @database
+    add si, ax
+
+    push si
+    call read_record
+    add sp, 2
+    ret
+add_record endp

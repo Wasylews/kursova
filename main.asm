@@ -109,7 +109,11 @@ main proc c
     jmp @@break
 
 @@add_data:
-    ; TODO
+    push db_size
+    push offset database
+    call add_record
+    add sp, 4
+    inc db_size
     jmp @@break
 
 @@remove_data:
