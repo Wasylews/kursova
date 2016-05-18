@@ -111,3 +111,12 @@ search_record proc c
 
     ret
 search_record endp
+
+; remove_record(book *database, const int n)
+remove_record proc c
+    arg @database, @n
+    range_check_input enter_record_num 0 @n
+
+    ; TODO: mark database[n] as removed, teach show_table skip such records
+    ret
+remove_record endp
