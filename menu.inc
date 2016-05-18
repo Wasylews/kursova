@@ -24,7 +24,7 @@ column_prompt db '1) Author', ENDL
               db '4) Publisher', ENDL
               db '5) Year', ENDL
               db '6) Pages count', ENDL
-              db '5) Price', ENDL
+              db '7) Price', ENDL
               db 'Choose column: ', 0
 
 temp db 80 dup('?')
@@ -87,7 +87,7 @@ show_table endp
 ; filter_record(const int column, char *what, book *database, const int n)
 filter_record proc c
     arg @column, @what, @database, @n
-    uses dx, si, cx
+    uses dx, si, cx, di
     mov cx, @n
 
     mov dx, type book
@@ -96,7 +96,56 @@ filter_record proc c
     cmp [si].removed, 1
     je @@skip
 
-; TODO: strcmp([si].column, what)
+    push @what
+
+    cmp @column, 1
+    je @@filter_author
+
+    cmp @column, 2
+    je @@filter_title
+
+    cmp @column, 3
+    je @@filter_genre
+
+    cmp @column, 4
+    je @@filter_publisher
+
+    ; cmp @column, 5
+    ; je @@filter_year
+
+    ; cmp @column, 6
+    ; je @@filter_pages
+
+    ; cmp @column, 7
+    ; je @@filter_price
+
+@@filter_author:
+    lea di, [si].m_author
+    push di
+    jmp @@compare
+
+@@filter_title:
+    lea di, [si].m_title
+    push di
+    jmp @@compare
+
+@@filter_genre:
+    lea di, [si].m_genre
+    push di
+    jmp @@compare
+
+@@filter_publisher:
+    lea di, [si].m_publisher
+    push di
+
+@@compare:
+    ; partial matching
+    call strstr
+    add sp, 4
+
+    test ax, ax
+    je @@skip
+
     push si
     call print_record
     add sp, 2
@@ -114,7 +163,7 @@ search_record proc c
     uses si, cx
 
     ; ask user in which column to search
-    push 5
+    push 7
     push 1
     push offset column_prompt
     call range_check_input
