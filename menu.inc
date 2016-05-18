@@ -47,13 +47,6 @@ endif
 endm
 
 
-; int show_main_menu() -> al
-show_main_menu proc c
-    range_check_input main_menu 1 7
-    ret
-show_main_menu endp
-
-
 ; show_table(book *database, const int n)
 show_table proc c
     arg @database, @n

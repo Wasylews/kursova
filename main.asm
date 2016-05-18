@@ -64,7 +64,7 @@ main proc c
     add sp, 2
 
 @@main_loop:
-    call show_main_menu
+    range_check_input main_menu 1 7
 
     ; switch al
     cmp al, 1               ; case 1
