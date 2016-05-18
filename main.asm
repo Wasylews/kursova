@@ -16,10 +16,12 @@ book struc
     m_genre db 50 dup ('?')
     m_publisher db 50 dup ('?')
 
+; TODO: use strings? In filter_record you must convert int/float to string
     m_year dw ?
     m_pages_count dw ?
     m_price dd ?
 
+; TODO: skip removed records, change indexes, move to end?
     removed db 0
 book ends
 
