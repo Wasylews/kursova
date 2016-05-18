@@ -115,7 +115,14 @@ search_record endp
 ; remove_record(book *database, const int n)
 remove_record proc c
     arg @database, @n
+    uses dx, si
+
     range_check_input enter_record_num 0 @n
+
+    mov dx, type book
+    mul dx
+    mov si, @database
+    add si, ax
 
     ; TODO: mark database[n] as removed, teach show_table skip such records
     ret
@@ -125,8 +132,21 @@ remove_record endp
 ; edit_record(book *database, const int n)
 edit_record proc c
     arg @database, @n
+    uses dx, si
+
     range_check_input enter_record_num 0 @n
 
-    ; TODO: print_record(n) and read_record(n)
+    mov dx, type book
+    mul dx
+    mov si, @database
+    add si, ax
+
+    push si
+    call print_record
+    add sp, 2
+
+    push si
+    call read_record
+    add sp, 2
     ret
 edit_record endp

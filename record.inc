@@ -1,6 +1,15 @@
 .data
 sep db ' | ', 0
 
+p_author db 'author: ', 0
+p_title db 'title: ', 0
+p_genre db 'genre: ', 0
+p_publisher db 'publisher: ', 0
+p_year db 'year: ', 0
+p_pages db 'pages count: ', 0
+p_price db 'price: ', 0
+
+
 .code
 ; print_int(int x)
 print_int proc c
@@ -127,32 +136,40 @@ read_record proc c
 
     mov si, @rec
 
+    puts p_author
+
     lea di, [si].m_author
     push di
     call gets
     add sp, 2
 
+    puts p_title
     lea di, [si].m_title
     push di
     call gets
     add sp, 2
 
+    puts p_genre
     lea di, [si].m_genre
     push di
     call gets
     add sp, 2
 
+    puts p_publisher
     lea di, [si].m_publisher
     push di
     call gets
     add sp, 2
 
+    puts p_year
     call read_int
     mov [si].m_year, ax
 
+    puts p_pages
     call read_int
     mov [si].m_pages_count, ax
 
+    puts p_price
     lea di, [si].m_price
     push di
     call read_float
