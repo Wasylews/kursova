@@ -22,6 +22,8 @@ column_prompt db '1) Author', ENDL
               db '5) Price', ENDL
               db 'Choose column: ', 0
 
+temp db 80 dup('?')
+
 .code
 ; int range_check_input(char *prompt, int min, int max) -> al
 range_check_input macro prompt: req, min: req, max:req
@@ -69,3 +71,50 @@ show_table proc c
     loop @@print_loop
     ret
 show_table endp
+
+
+; filter_record(const int column, char *what, book *database, const int n)
+filter_record proc c
+    arg @column, @what, @database, @n
+    uses dx, si, cx
+    mov cx, @n
+
+    mov dx, type book
+    mov si, @database
+@@filter_loop:
+    ; TODO: strcmp([si].column, what)
+    push si
+    call print_record
+    add sp, 2
+
+    add si, dx
+    loop @@filter_loop
+    ret
+filter_record endp
+
+
+; search_record(book *database, const int n)
+search_record proc c
+    arg @database, @n
+    local @@column
+    uses si
+
+    range_check_input column_prompt 1 5
+    mov @@column, ax
+
+    puts filter_by
+
+    lea si, temp
+    push si
+    call gets
+    add sp, 2
+
+    push @n
+    push @database
+    push si
+    push @@column
+    call filter_record
+    add sp, 8
+
+    ret
+search_record endp
