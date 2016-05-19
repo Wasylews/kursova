@@ -84,50 +84,6 @@ show_table proc c
 show_table endp
 
 
-; char *get_member(book *record, int index) -> ax
-get_member proc c
-    arg @record, @index
-    uses bx
-    mov bx, @record
-
-    xor ax, ax
-    cmp @index, 1
-    jne @@if_title
-    lea ax, [bx].m_author
-    jmp @@done
-@@if_title:
-    cmp @index, 2
-    jne @@if_genre
-    lea ax, [bx].m_title
-    jmp @@done
-@@if_genre:
-    cmp @index, 3
-    jne @@if_publisher
-    lea ax, [bx].m_genre
-    jmp @@done
-@@if_publisher:
-    cmp @index, 4
-    jne @@if_year
-    lea ax, [bx].m_publisher
-    jmp @@done
-@@if_year:
-    cmp @index, 5
-    jne @@if_pages
-    lea ax, [bx].m_year
-    jmp @@done
-@@if_pages:
-    cmp @index, 6
-    jne @@if_price
-    lea ax, [bx].m_pages_count
-    jmp @@done
-@@if_price:
-    lea ax, [bx].m_price
-
-@@done:
-    ret
-get_member endp
-
-
 ; filter_record(const int column, char *what, book *database, const int n)
 filter_record proc c
     arg @column, @what, @database, @n
