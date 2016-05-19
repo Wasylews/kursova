@@ -11,44 +11,6 @@ p_price db 'price: ', 0
 
 
 .code
-; print_int(int x)
-print_int proc c
-    arg @x
-    local @@temp: byte: 5
-    uses si
-
-    lea si, @@temp
-
-    push 10
-    push si
-    push @x
-    call itoa
-    add sp, 6
-
-    puts si
-    ret
-print_int endp
-
-
-; print_float(float x)
-print_float proc c
-    arg @x
-    local @@temp: byte: 6
-    uses si
-
-    lea si, @@temp
-
-    push 100
-    push si
-    push @x
-    call ftoa
-    add sp, 6
-
-    puts si
-    ret
-print_float endp
-
-
 ; print_record(book rec)
 print_record proc c
     arg @rec
@@ -90,39 +52,20 @@ print_record endp
 
 ; inr read_int() -> ax
 read_int proc c
-    local @@temp: byte: 5
-    uses si
+    local @@temp: byte: 6
+    uses dx
 
-    lea si, @@temp
-    push si
+    lea dx, @@temp
+    push dx
     call gets
     add sp, 2
 
-    push si
+    push dx
     call atoi
     add sp, 2
     ret
 read_int endp
 
-
-; read_float(float *dest)
-read_float proc c
-    arg @dest
-    local @@temp: byte: 6
-    uses si
-
-    lea si, @@temp
-    push si
-    call gets
-    add sp, 2
-
-    push @dest
-    push si
-    call atof
-    add sp, 4
-
-    ret
-read_float endp
 
 
 ; read_record(book *rec)
