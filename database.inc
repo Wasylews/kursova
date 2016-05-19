@@ -37,9 +37,21 @@ db_fetch proc c
 db_fetch endp
 
 
-; void db_commit(FILE handle, const book* database)
+; void db_commit(FILE handle, const book* database, const int n)
 db_commit proc c
-    arg @handle, @database
+    arg @handle, @database, @n
+    uses dx, si, cx
+    mov cx, @n
 
+    mov dx, type book
+    mov si, @database
+@@print_loop:
+    cmp [si].removed, 1
+    je @@skip
+
+    ; TODO: save record to file with ; as separator
+@@skip:
+    add si, dx
+    loop @@print_loop
     ret
 db_commit endp
