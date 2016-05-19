@@ -72,20 +72,16 @@ print_record proc c
     puts dx
     puts sep
 
-    push [di].m_year
-    call print_int
-    add sp, 2
+    lea dx, [di].m_year
+    puts dx
     puts sep
 
-    push [di].m_pages_count
-    call print_int
-    add sp, 2
+    lea dx, [di].m_pages_count
+    puts dx
     puts sep
 
     lea dx, [di].m_price
-    push dx
-    call print_float
-    add sp, 2
+    puts dx
 
     putc ENDL
     ret
@@ -161,17 +157,21 @@ read_record proc c
     add sp, 2
 
     puts p_year
-    call read_int
-    mov [si].m_year, ax
+    lea di, [si].m_year
+    push di
+    call gets
+    add sp, 2
 
     puts p_pages
-    call read_int
-    mov [si].m_pages_count, ax
+    lea di, [si].m_pages_count
+    push di
+    call gets
+    add sp, 2
 
     puts p_price
     lea di, [si].m_price
     push di
-    call read_float
+    call gets
     add sp, 2
 
     ret
@@ -223,8 +223,7 @@ get_field endp
 ; parse_record(const char *rec, book *dest)
 parse_record proc c
     arg @rec, @dest
-    uses si, di, bx, cx
-    local @@temp: byte: 5
+    uses si, di
 
     mov si, @dest
 
@@ -260,45 +259,28 @@ parse_record proc c
     call get_field
     add sp, 6
 
-    lea di, @@temp
     ; get year
+    lea di, [si].m_year
     push di
     push @rec
     push 4
     call get_field
     add sp, 6
 
-    ; convert to integer
-    push di
-    call atoi
-    add sp, 2
-    mov [si].m_year, ax
-
     ; get pages_count
+    lea di, [si].m_pages_count
     push di
     push @rec
     push 5
     call get_field
     add sp, 6
 
-    ; convert to integer
-    push di
-    call atoi
-    add sp, 2
-    mov [si].m_pages_count, ax
-
     ; get price
+    lea di, [si].m_price
     push di
     push @rec
     push 6
     call get_field
     add sp, 6
-
-    ; convert to float
-    lea bx, [si].m_price
-    push bx
-    push di
-    call atof
-    add sp, 4
     ret
 parse_record endp
