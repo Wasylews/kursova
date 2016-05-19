@@ -46,7 +46,7 @@ main proc c
     add sp, 4
 
     ; check for errors
-    cmp ax, 0
+    test ax, ax
     jne @@open_success
 
     ; if can't open file print error and exit
@@ -151,6 +151,34 @@ main proc c
     jmp @@main_loop
 
 @@quit:
+    ; rewrite database file
+    push WO
+    push offset filename
+    call fopen
+    add sp, 4
+
+    ; check for errors
+    test ax, ax
+    jne @@ok
+
+    ; if can't open file print error and exit
+    puts error
+    push EXIT_FAILURE
+    call exit
+    add sp, 2
+@@ok:
+    mov handle, ax
+    ; write database
+    push db_size
+    push offset database
+    push handle
+    call db_commit
+    add sp, 6
+    ; and close file
+    push handle
+    call fclose
+    add sp, 2
+
     _exit
 main endp
 

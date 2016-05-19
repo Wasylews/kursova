@@ -1,4 +1,5 @@
 .data
+file_fmt db '%s;%s;%s;%s;%s;%s;%s;', ENDL, 0
 rec db 256 dup('?')
 
 .code
@@ -49,7 +50,12 @@ db_commit proc c
     cmp [si].removed, 1
     je @@skip
 
-    ; TODO: save record to file with ; as separator
+    push si
+    push offset file_fmt
+    push @handle
+    call print_record
+    add sp, 6
+
 @@skip:
     add si, dx
     loop @@print_loop
