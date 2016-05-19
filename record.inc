@@ -9,6 +9,8 @@ p_year db 'year: ', 0
 p_pages db 'pages count: ', 0
 p_price db 'price: ', 0
 
+rec_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
+
 buf db 10 dup('?')
 
 
@@ -16,38 +18,35 @@ buf db 10 dup('?')
 ; print_record(book rec)
 print_record proc c
     arg @rec
-    uses di, dx
+    uses si, dx
 
-    mov di, @rec
+    mov si, @rec
 
-    lea dx, [di].m_author
-    puts dx
-    puts sep
+    lea dx, [si].m_price
+    push dx
 
-    lea dx, [di].m_title
-    puts dx
-    puts sep
+    lea dx, [si].m_pages_count
+    push dx
 
-    lea dx, [di].m_genre
-    puts dx
-    puts sep
+    lea dx, [si].m_year
+    push dx
 
-    lea dx, [di].m_publisher
-    puts dx
-    puts sep
+    lea dx, [si].m_publisher
+    push dx
 
-    lea dx, [di].m_year
-    puts dx
-    puts sep
+    lea dx, [si].m_genre
+    push dx
 
-    lea dx, [di].m_pages_count
-    puts dx
-    puts sep
+    lea dx, [si].m_title
+    push dx
 
-    lea dx, [di].m_price
-    puts dx
+    lea dx, [si].m_author
+    push dx
 
-    putc ENDL
+    push offset rec_fmt
+    push STDOUT
+    call fprintf
+    add sp, 18
     ret
 print_record endp
 
@@ -65,7 +64,6 @@ read_int proc c
     add sp, 2
     ret
 read_int endp
-
 
 
 ; read_record(book *rec)
