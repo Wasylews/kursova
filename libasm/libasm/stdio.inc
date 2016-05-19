@@ -21,28 +21,27 @@ SEEK_END equ 02h            ; to end-of-file
 ;;; standard file handles
 STDOUT equ 1
 
+char db 2 dup('?')
 
-; fputc(char c, FILE handle) -> ax
-fputc macro c: req, handle: req
-ifnb <c, handle>
-    local @@temp
-    ; we need to save registers
-    push si
+; _fputc(char c, FILE handle) -> ax
+fputc proc c
+    arg @c, @handle
+    uses si, bx
 
-    mov si, @@temp
-    mov byte ptr[si], c
+    ; make string from @c
+    lea si, char
+    mov bx, @c
+    mov byte ptr[si], bl
+    inc si
+    mov byte ptr[si], 0
 
-    push handle
+    push @handle
     push 1
-    push si
+    push offset char
     call fwrite
-
     add sp, 6
-
-    ; don't forget restore
-    pop si
-endif
-endm
+    ret
+fputc endp
 
 
 ; putc(char c) -> al
@@ -87,7 +86,6 @@ fgetc proc c
 @@return:
     ret
 fgetc endp
-
 
 
 ; int fputs(char *s, FILE handle) -> ax
@@ -416,7 +414,10 @@ fprintf proc c
     add di, 2
     jmp @@next_char
 @@just_char:
-    fputc bl word ptr[bp+4]
+    push word ptr[bp+4]
+    push bx
+    call fputc
+    add sp, 4
 
 @@next_char:
     inc si
