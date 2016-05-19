@@ -290,3 +290,33 @@ add_record proc c
     add sp, 2
     ret
 add_record endp
+
+
+; sort_record(book *database, const int n)
+sort_record proc c
+    arg @database, @n
+    uses si, dx, cx
+
+    mov dx, type book
+    mov si, @database
+    mov cx, @n
+
+    ; ask user by which column sort
+    push 7
+    push 1
+    push offset column_prompt
+    call range_check_input
+    add sp, 6
+
+@@print_loop:
+    cmp [si].removed, 1
+    je @@skip
+
+; TODO: sort records
+
+@@skip:
+    add si, dx
+    loop @@print_loop
+
+    ret
+sort_record endp

@@ -141,8 +141,11 @@ main proc c
     jmp @@break
 
 @@sort_data:
-    ; TODO
-    jmp @@break
+    ; sort records in database
+    push db_size
+    push offset database
+    call sort_record
+    add sp, 4
 
 @@break:
     jmp @@main_loop
