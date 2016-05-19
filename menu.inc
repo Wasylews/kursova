@@ -27,6 +27,8 @@ column_prompt db '1) Author', ENDL
               db '7) Price', ENDL
               db 'Choose column: ', 0
 
+table_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
+
 temp db 80 dup('?')
 
 .code
@@ -74,8 +76,10 @@ show_table proc c
     je @@skip
 
     push si
+    push offset table_fmt
+    push STDOUT
     call print_record
-    add sp, 2
+    add sp, 6
 
 @@skip:
     add si, dx
@@ -111,8 +115,10 @@ filter_record proc c
     je @@skip
 
     push si
+    push offset table_fmt
+    push STDOUT
     call print_record
-    add sp, 2
+    add sp, 6
 
 @@skip:
     add si, dx
@@ -176,8 +182,10 @@ remove_record proc c
 
 @@valid_record:
     push si
+    push offset table_fmt
+    push STDOUT
     call print_record
-    add sp, 2
+    add sp, 6
 
     ; confrim removing
     push 2
@@ -218,8 +226,10 @@ edit_record proc c
 
 @@valid_record:
     push si
+    push offset table_fmt
+    push STDOUT
     call print_record
-    add sp, 2
+    add sp, 6
 
     push si
     call read_record

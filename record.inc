@@ -9,15 +9,13 @@ p_year db 'year: ', 0
 p_pages db 'pages count: ', 0
 p_price db 'price: ', 0
 
-rec_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
-
 buf db 10 dup('?')
 
 
 .code
-; print_record(book rec)
+; print_record(FILE handle, const char *fmt, const book *rec)
 print_record proc c
-    arg @rec
+    arg @handle, @fmt, @rec
     uses si, dx
 
     mov si, @rec
@@ -43,8 +41,8 @@ print_record proc c
     lea dx, [si].m_author
     push dx
 
-    push offset rec_fmt
-    push STDOUT
+    push @fmt
+    push @handle
     call fprintf
     add sp, 18
     ret
