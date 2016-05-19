@@ -16,7 +16,6 @@ book struc
     m_genre db 50 dup ('?')
     m_publisher db 50 dup ('?')
 
-; TODO: use strings? In filter_record you must convert int/float to string
     m_year db 5 dup('?')
     m_pages_count db 5 dup('?')
     m_price db 6 dup('?')
