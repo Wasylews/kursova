@@ -9,6 +9,8 @@ p_year db 'year: ', 0
 p_pages db 'pages count: ', 0
 p_price db 'price: ', 0
 
+buf db 10 dup('?')
+
 
 .code
 ; print_record(book rec)
@@ -52,10 +54,8 @@ print_record endp
 
 ; inr read_int() -> ax
 read_int proc c
-    local @@temp: byte: 6
     uses dx
-
-    lea dx, @@temp
+    lea dx, buf
     push dx
     call gets
     add sp, 2
