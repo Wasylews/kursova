@@ -151,16 +151,55 @@ search_record proc c
 search_record endp
 
 
+left_shift proc c
+    arg @from, @to, @database
+    uses si, bx, cx
+
+    mov bx, @from
+    mov cx, @to
+    dec cx
+
+@@shift_loop:
+    cmp bx, cx
+    je @@done
+
+    push @database
+    push bx
+    call db_record
+
+    mov si, ax
+
+    inc bx
+    push @database
+    push bx
+    call db_record
+
+; TODO: copy_record(si, ax)
+    push ax
+    push offset table_fmt
+    push STDOUT
+    call print_record
+    add sp, 6
+
+    jmp @@shift_loop
+
+@@done:
+    ret
+left_shift endp
+
+
 ; remove_record(book *database, const int n)
 remove_record proc c
     arg @database, @n
-
+    uses cx
     ; ask for a record id
     push @n
     push 0
     push offset enter_record_num
     call range_check_input
     add sp, 6
+
+    mov cx, ax
 
     push @database
     push ax
@@ -183,7 +222,11 @@ remove_record proc c
     cmp ax, 1
     jne @@cancel
 
-; TODO: left shift
+    push offset database
+    push @n
+    push cx
+    call left_shift
+    add sp, 6
 
 @@cancel:
     ret
