@@ -19,9 +19,6 @@ book struc
     m_year db 5 dup('?')
     m_pages_count db 5 dup('?')
     m_price db 6 dup('?')
-
-; TODO: skip removed records, change indexes, move to end?
-    removed db 0
 book ends
 
 

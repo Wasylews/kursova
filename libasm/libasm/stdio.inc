@@ -22,8 +22,9 @@ SEEK_END equ 02h            ; to end-of-file
 STDOUT equ 1
 
 char db 2 dup('?')
+convert_buf db 80 dup ('?')
 
-; _fputc(char c, FILE handle) -> ax
+; fputc(char c, FILE handle) -> ax
 fputc proc c
     arg @c, @handle
     uses si, bx
@@ -295,16 +296,17 @@ fseek endp
 ; _putint(int n, int radix, FILE handle)
 _putint proc c
     arg @n, @radix, @handle
-    local @@temp_buffer
+    uses dx
 
+    lea dx, convert_buf
     push @radix
-    push word ptr[offset @@temp_buffer]
+    push dx
     push @n
     call itoa
     add sp, 6
 
     push @handle
-    push word ptr[offset @@temp_buffer]
+    push dx
     call fputs
     add sp, 4
 

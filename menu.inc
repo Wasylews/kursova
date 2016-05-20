@@ -66,23 +66,19 @@ range_check_input endp
 ; show_table(book *database, const int n)
 show_table proc c
     arg @database, @n
-    uses dx, si, cx
+    uses bx, si, cx
     mov cx, @n
 
-    mov dx, type book
+    mov bx, type book
     mov si, @database
 @@print_loop:
-    cmp [si].removed, 1
-    je @@skip
-
     push si
     push offset table_fmt
     push STDOUT
     call print_record
     add sp, 6
 
-@@skip:
-    add si, dx
+    add si, bx
     loop @@print_loop
     ret
 show_table endp
@@ -97,9 +93,6 @@ filter_record proc c
     mov dx, type book
     mov si, @database
 @@filter_loop:
-    cmp [si].removed, 1
-    je @@skip
-
     push @column
     push si
     call get_member
@@ -158,10 +151,38 @@ search_record proc c
 search_record endp
 
 
+; left_shift(const int from, book *database, const int n)
+left_shift proc c
+    arg @from, @database, @n
+    uses cx, dx, si
+
+    mov cx, @from
+
+    ; get pointer to database[from]
+    mov ax, @from
+    mov dx, type book
+    mul dx
+    mov si, @database
+    add si, ax
+
+@@shift_loop:
+    cmp cx, @n
+    je @@done
+; TODO: copy_record(si, si+1)
+
+    add si, dx
+    inc cx
+    jmp @@shift_loop
+
+@@done:
+    ret
+left_shift endp
+
+
 ; remove_record(book *database, const int n)
 remove_record proc c
     arg @database, @n
-    uses dx, si
+    uses dx, si, cx
 
     ; ask for a record id
     push @n
@@ -170,15 +191,12 @@ remove_record proc c
     call range_check_input
     add sp, 6
 
+    mov cx, ax
+
     mov dx, type book
     mul dx
     mov si, @database
     add si, ax
-
-    cmp [si].removed, 1
-    jne @@valid_record
-    puts record_removed
-    jmp @@cancel
 
 @@valid_record:
     push si
@@ -197,7 +215,11 @@ remove_record proc c
     cmp ax, 1
     jne @@cancel
 
-    mov [si].removed, 1
+    push @n
+    push @database
+    push cx
+    call left_shift
+    add sp, 6
 @@cancel:
     ret
 remove_record endp
@@ -219,12 +241,6 @@ edit_record proc c
     mov si, @database
     add si, ax
 
-    cmp [si].removed, 1
-    jne @@valid_record
-    puts record_removed
-    jmp @@exit
-
-@@valid_record:
     push si
     push offset table_fmt
     push STDOUT
@@ -275,12 +291,7 @@ sort_record proc c
     add sp, 6
 
 @@print_loop:
-    cmp [si].removed, 1
-    je @@skip
-
 ; TODO: sort records
-
-@@skip:
     add si, dx
     loop @@print_loop
 

@@ -6,10 +6,10 @@ rec db 256 dup('?')
 ; int db_fetch(FILE handle, book *database) -> ax
 db_fetch proc c
     arg @handle, @database
-    uses bx, cx, si, dx
+    uses bx, cx, dx, si
 
-    mov bx, type book
-    mov dx, @database
+    mov dx, type book
+    mov bx, @database
 
     lea si, rec
     xor cx, cx
@@ -23,13 +23,13 @@ db_fetch proc c
     test ax, ax
     je @@done
 
-    push dx
+    push bx
     push si
     call parse_record
     add sp, 4
 
     inc cx
-    add dx, bx
+    add bx, dx
     jmp @@read_loop
 
 @@done:
@@ -47,16 +47,12 @@ db_commit proc c
     mov dx, type book
     mov si, @database
 @@print_loop:
-    cmp [si].removed, 1
-    je @@skip
-
     push si
     push offset file_fmt
     push @handle
     call print_record
     add sp, 6
 
-@@skip:
     add si, dx
     loop @@print_loop
     ret
