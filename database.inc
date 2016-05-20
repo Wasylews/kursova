@@ -38,6 +38,20 @@ db_fetch proc c
 db_fetch endp
 
 
+; book *db_record(const int i, const book *database)
+db_record proc c
+    arg @i, @database
+    uses si, dx
+    mov si, @database
+    mov ax, @i
+    mov dx, type book
+    mul dx
+    add si, ax
+    mov ax, si
+    ret
+db_record endp
+
+
 ; void db_commit(FILE handle, const book* database, const int n)
 db_commit proc c
     arg @handle, @database, @n

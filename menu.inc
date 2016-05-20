@@ -151,38 +151,9 @@ search_record proc c
 search_record endp
 
 
-; left_shift(const int from, book *database, const int n)
-left_shift proc c
-    arg @from, @database, @n
-    uses cx, dx, si
-
-    mov cx, @from
-
-    ; get pointer to database[from]
-    mov ax, @from
-    mov dx, type book
-    mul dx
-    mov si, @database
-    add si, ax
-
-@@shift_loop:
-    cmp cx, @n
-    je @@done
-; TODO: copy_record(si, si+1)
-
-    add si, dx
-    inc cx
-    jmp @@shift_loop
-
-@@done:
-    ret
-left_shift endp
-
-
 ; remove_record(book *database, const int n)
 remove_record proc c
     arg @database, @n
-    uses dx, si, cx
 
     ; ask for a record id
     push @n
@@ -191,15 +162,12 @@ remove_record proc c
     call range_check_input
     add sp, 6
 
-    mov cx, ax
-
-    mov dx, type book
-    mul dx
-    mov si, @database
-    add si, ax
+    push @database
+    push ax
+    call db_record
 
 @@valid_record:
-    push si
+    push ax
     push offset table_fmt
     push STDOUT
     call print_record
@@ -215,11 +183,8 @@ remove_record proc c
     cmp ax, 1
     jne @@cancel
 
-    push @n
-    push @database
-    push cx
-    call left_shift
-    add sp, 6
+; TODO: left shift
+
 @@cancel:
     ret
 remove_record endp
@@ -228,7 +193,7 @@ remove_record endp
 ; edit_record(book *database, const int n)
 edit_record proc c
     arg @database, @n
-    uses dx, si
+    uses si
 
     push @n
     push 0
@@ -236,10 +201,10 @@ edit_record proc c
     call range_check_input
     add sp, 6
 
-    mov dx, type book
-    mul dx
-    mov si, @database
-    add si, ax
+    push @database
+    push ax
+    call db_record
+    mov si, ax
 
     push si
     push offset table_fmt
