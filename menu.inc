@@ -27,7 +27,7 @@ column_prompt db '1) Author', ENDL
               db '7) Price', ENDL
               db 'Choose column: ', 0
 
-table_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
+table_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, ENDL, 0
 
 temp db 80 dup('?')
 
@@ -151,6 +151,7 @@ search_record proc c
 search_record endp
 
 
+; left_shift(const int from, const int to, book *database)
 left_shift proc c
     arg @from, @to, @database
     uses si, bx, cx
@@ -174,11 +175,11 @@ left_shift proc c
     push bx
     call db_record
 
-; TODO: copy_record(si, ax)
+    ; copy record from si+1 to si
+    push type book
     push ax
-    push offset table_fmt
-    push STDOUT
-    call print_record
+    push si
+    call memcpy
     add sp, 6
 
     jmp @@shift_loop
@@ -193,7 +194,10 @@ remove_record proc c
     arg @database, @n
     uses cx
     ; ask for a record id
-    push @n
+    mov cx, @n
+    dec cx
+
+    push cx
     push 0
     push offset enter_record_num
     call range_check_input
@@ -228,7 +232,13 @@ remove_record proc c
     call left_shift
     add sp, 6
 
+    mov ax, 1
+    jmp @@done
+
 @@cancel:
+    mov ax, 0
+
+@@done:
     ret
 remove_record endp
 
@@ -236,9 +246,12 @@ remove_record endp
 ; edit_record(book *database, const int n)
 edit_record proc c
     arg @database, @n
-    uses si
+    uses si, cx
+    ; ask for a record id
+    mov cx, @n
+    dec cx
 
-    push @n
+    push cx
     push 0
     push offset enter_record_num
     call range_check_input
@@ -282,14 +295,103 @@ add_record proc c
 add_record endp
 
 
+; void swap(a, b, elem_size)
+swap proc c
+    arg @a, @b, @n
+    uses ax, cx, si, di
+    mov cx, @n
+    mov si, @a
+    mov di, @b
+@@cycle:
+    cmp cx, 0
+    je @@end
+    mov al, [di]
+    mov ah, [si]
+    mov [di], ah
+    mov [si], al
+    inc si
+    inc di
+    dec cx
+    jmp @@cycle
+@@end:
+    ret
+swap endp
+
+
+book_cmp proc c
+    arg @a, @b, @column
+    uses si
+
+    push @column
+    push @a
+    call get_member
+    add sp, 4
+    mov si, ax
+
+    push @column
+    push @b
+    call get_member
+    add sp, 4
+
+    push si
+    push ax
+    call strcmp
+    add sp, 4
+
+    ret
+book_cmp endp
+
+
+; void buble_sort(void *arr, size_t arr_len, size_t size_elem, size_t column
+;                 int (*cmpr)(const *void, const *void, size_t column))
+buble_sort proc c
+    arg @arr, @arr_len, @size_elem, @column, @cmpr
+    uses ax, bx, cx, dx, si, di
+    mov cx, @arr_len
+
+;
+@@cycle1:
+    test cx, cx
+    je @@done
+
+    mov dx, @arr_len
+    dec dx
+    mov bx, @arr
+@@cycle2:
+    test dx, dx
+    je @@ns0
+    mov si, bx
+    add si, @size_elem
+
+    push @column
+    push si
+    push bx
+    call @cmpr
+    add sp, 4
+
+    test ax, ax
+    jng @@ns1
+
+    push @size_elem
+    push si
+    push bx
+    call swap
+    add sp, 6
+@@ns1:
+    dec dx
+    add bx, @size_elem
+    jmp @@cycle2
+@@ns0:
+    dec cx
+    jmp @@cycle1
+@@done:
+    ret
+buble_sort endp
+
+
 ; sort_record(book *database, const int n)
 sort_record proc c
     arg @database, @n
-    uses si, dx, cx
-
-    mov dx, type book
-    mov si, @database
-    mov cx, @n
 
     ; ask user by which column sort
     push 7
@@ -298,10 +400,13 @@ sort_record proc c
     call range_check_input
     add sp, 6
 
-@@print_loop:
-; TODO: sort records
-    add si, dx
-    loop @@print_loop
+    push offset book_cmp
+    push ax
+    push type book
+    push @n
+    push @database
+    call buble_sort
+    add sp, 10
 
     ret
 sort_record endp

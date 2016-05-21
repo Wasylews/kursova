@@ -120,6 +120,10 @@ main proc c
     push offset database
     call remove_record
     add sp, 4
+    test ax, ax
+    je @@cancel
+    dec db_size
+@@cancel:
     jmp @@break
 
 @@edit_data:
