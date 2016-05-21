@@ -342,51 +342,47 @@ book_cmp proc c
 book_cmp endp
 
 
-; void buble_sort(void *arr, size_t arr_len, size_t size_elem, size_t column
-;                 int (*cmpr)(const *void, const *void, size_t column))
-buble_sort proc c
-    arg @arr, @arr_len, @size_elem, @column, @cmpr
+; void insert_sort(void *arr, size_t arr_len, size_t size_elem, size_t column,
+;                  int (*comparator)(const *void, const *void, size_t column))
+insert_sort proc c
+    arg @arr, @arr_len, @size_elem, @column, @comparator
     uses ax, bx, cx, dx, si, di
     mov cx, @arr_len
-
-;
-@@cycle1:
-    test cx, cx
-    je @@done
-
-    mov dx, @arr_len
-    dec dx
+    dec cx
     mov bx, @arr
-@@cycle2:
-    test dx, dx
-    je @@ns0
+@@cycle1:
+    cmp cx, 0
+    je @@end
     mov si, bx
-    add si, @size_elem
-
+    mov di, bx
+    sub di, @size_elem
+@@cycle2:
     push @column
     push si
-    push bx
-    call @cmpr
-    add sp, 4
+    push di
+    call @comparator
+    add sp, 6
 
     test ax, ax
-    jng @@ns1
+    jle @@ns0
 
     push @size_elem
     push si
-    push bx
+    push di
     call swap
     add sp, 6
-@@ns1:
-    dec dx
-    add bx, @size_elem
-    jmp @@cycle2
+
+    sub si, @size_elem
+    sub di, @size_elem
+    cmp di, @arr
+    jnb @@cycle2
 @@ns0:
     dec cx
+    add bx, @size_elem
     jmp @@cycle1
-@@done:
+@@end:
     ret
-buble_sort endp
+insert_sort endp
 
 
 ; sort_record(book *database, const int n)
@@ -405,7 +401,7 @@ sort_record proc c
     push type book
     push @n
     push @database
-    call buble_sort
+    call insert_sort
     add sp, 10
 
     ret
