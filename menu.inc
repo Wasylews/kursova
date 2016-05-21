@@ -350,6 +350,7 @@ insert_sort proc c
     mov cx, @arr_len
     dec cx
     mov bx, @arr
+    add bx, @size_elem
 @@cycle1:
     cmp cx, 0
     je @@end

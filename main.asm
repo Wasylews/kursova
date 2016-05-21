@@ -4,8 +4,8 @@
 .stack 256h
 
 .data
-filename db 'db.txt', 0
 error db 'Cannot open database', 0
+filename db 'db.txt', 0
 
 db_size dw 0
 handle dw ?
