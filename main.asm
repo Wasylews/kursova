@@ -93,7 +93,7 @@ main proc c
     je @@search_data        ; case 5
 
     cmp al, 6               ; case 6
-    je @@sort_data
+    je @@show_about
 
     cmp al, 7
     je @@quit
@@ -141,12 +141,8 @@ main proc c
     add sp, 4
     jmp @@break
 
-@@sort_data:
-    ; sort records in database
-    push db_size
-    push offset database
-    call sort_record
-    add sp, 4
+@@show_about:
+    puts about_info
 
 @@break:
     jmp @@main_loop

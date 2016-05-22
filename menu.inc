@@ -4,7 +4,7 @@ main_menu db '1) Show all records', ENDL
           db '3) Remove record', ENDL
           db '4) Edit record', ENDL
           db '5) Search record', ENDL
-          db '6) Sort table by column', ENDL
+          db '6) About', ENDL
           db '7) Exit', ENDL
           db 'Choose what to do: ', 0
 
@@ -26,6 +26,11 @@ column_prompt db '1) Author', ENDL
               db '6) Pages count', ENDL
               db '7) Price', ENDL
               db 'Choose column: ', 0
+
+about_info db 'BookShop', ENDL
+           db 'Version: 1.0', ENDL
+           db 'Copyright (C) Sabov W.', ENDL, 0
+
 
 table_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, ENDL, 0
 
@@ -293,117 +298,3 @@ add_record proc c
     add sp, 2
     ret
 add_record endp
-
-
-; void swap(a, b, elem_size)
-swap proc c
-    arg @a, @b, @n
-    uses ax, cx, si, di
-    mov cx, @n
-    mov si, @a
-    mov di, @b
-@@cycle:
-    cmp cx, 0
-    je @@end
-    mov al, [di]
-    mov ah, [si]
-    mov [di], ah
-    mov [si], al
-    inc si
-    inc di
-    dec cx
-    jmp @@cycle
-@@end:
-    ret
-swap endp
-
-
-book_cmp proc c
-    arg @a, @b, @column
-    uses si
-
-    push @column
-    push @a
-    call get_member
-    add sp, 4
-    mov si, ax
-
-    push @column
-    push @b
-    call get_member
-    add sp, 4
-
-    push si
-    push ax
-    call strcmp
-    add sp, 4
-
-    ret
-book_cmp endp
-
-
-; void insert_sort(void *arr, size_t arr_len, size_t size_elem, size_t column,
-;                  int (*comparator)(const *void, const *void, size_t column))
-insert_sort proc c
-    arg @arr, @arr_len, @size_elem, @column, @comparator
-    uses ax, bx, cx, dx, si, di
-    mov cx, @arr_len
-    dec cx
-    mov bx, @arr
-    add bx, @size_elem
-@@cycle1:
-    cmp cx, 0
-    je @@end
-    mov si, bx
-    mov di, bx
-    sub di, @size_elem
-@@cycle2:
-    push @column
-    push si
-    push di
-    call @comparator
-    add sp, 6
-
-    test ax, ax
-    jle @@ns0
-
-    push @size_elem
-    push si
-    push di
-    call swap
-    add sp, 6
-
-    sub si, @size_elem
-    sub di, @size_elem
-    cmp di, @arr
-    jnb @@cycle2
-@@ns0:
-    dec cx
-    add bx, @size_elem
-    jmp @@cycle1
-@@end:
-    ret
-insert_sort endp
-
-
-; sort_record(book *database, const int n)
-sort_record proc c
-    arg @database, @n
-
-    ; ask user by which column sort
-    push 7
-    push 1
-    push offset column_prompt
-    call range_check_input
-    add sp, 6
-
-    push offset book_cmp
-    push ax
-    push type book
-    push @n
-    push @database
-    call insert_sort
-    add sp, 10
-
-    ret
-sort_record endp
