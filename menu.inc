@@ -42,6 +42,8 @@ table_fmt db 'Author: %s', ENDL
 
 search_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
 
+id_fmt db '#: %d', ENDL, 0
+
 temp db 80 dup('?')
 
 .code
@@ -107,6 +109,12 @@ show_table proc c
 @@view_loop:
     cls
 
+    push dx
+    push offset id_fmt
+    push STDOUT
+    call fprintf
+    add sp, 6
+
     push si
     push offset table_fmt
     push STDOUT
@@ -148,7 +156,6 @@ show_table proc c
     jmp @@view_loop
 
 @@exit_view:
-    cls
     ret
 show_table endp
 
