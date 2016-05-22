@@ -12,3 +12,6 @@ BUILD/
 
 # ignore database file
 db.txt
+
+# ignore dosbox capture folder
+capture

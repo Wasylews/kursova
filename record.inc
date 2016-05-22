@@ -1,13 +1,13 @@
 .data
 sep db ' | ', 0
 
-p_author db 'author: ', 0
-p_title db 'title: ', 0
-p_genre db 'genre: ', 0
-p_publisher db 'publisher: ', 0
-p_year db 'year: ', 0
-p_pages db 'pages count: ', 0
-p_price db 'price: ', 0
+p_author db 'Author: ', 0
+p_title db 'Title: ', 0
+p_genre db 'Genre: ', 0
+p_publisher db 'Publisher: ', 0
+p_year db 'Year: ', 0
+p_pages db 'Pages count: ', 0
+p_price db 'Price: ', 0
 
 buf db 10 dup('?')
 
