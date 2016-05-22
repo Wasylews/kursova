@@ -17,8 +17,8 @@ book struc
     m_publisher db 50 dup ('?')
 
     m_year db 5 dup('?')
-    m_pages_count db 5 dup('?')
-    m_price db 6 dup('?')
+    m_pages_count db 7 dup('?')
+    m_price db 10 dup('?')
 book ends
 
 

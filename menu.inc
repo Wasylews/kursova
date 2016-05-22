@@ -32,7 +32,7 @@ about_info db 'BookShop', ENDL
            db 'Copyright (C) Sabov W.', ENDL, 0
 
 
-table_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, ENDL, 0
+table_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
 
 temp db 80 dup('?')
 
@@ -68,23 +68,79 @@ range_check_input proc c
 range_check_input endp
 
 
+cls macro
+    push dx
+    mov ah, 6
+    mov al, 0
+    mov bh, 7
+    mov cx, 0
+    mov dh, 24
+    mov dl, 79
+    int 10h
+
+    mov ah, 2
+    mov bh, 0
+    mov dh, 0
+    mov dl, 0
+    int 10h
+    xor ax, ax
+    pop dx
+endm
+
+
 ; show_table(book *database, const int n)
 show_table proc c
     arg @database, @n
-    uses bx, si, cx
-    mov cx, @n
-
+    uses bx, si, dx
     mov bx, type book
     mov si, @database
-@@print_loop:
+
+    xor dx, dx
+@@view_loop:
+    cls
+
     push si
     push offset table_fmt
     push STDOUT
     call print_record
     add sp, 6
 
+    _getch
+    cmp al, 1bh
+    je @@exit_view
+
+    cmp ah, 48h
+    je @@scroll_up
+
+    cmp ah, 50h
+    je @@scroll_down
+
+@@scroll_up:
+    test dx, dx
+    jle @@back_skip
+
+    dec dx
+    sub si, bx
+@@back_skip:
+    jmp @@next
+
+@@scroll_down:
+    inc dx
+    cmp dx, @n
+    je @@first
+
     add si, bx
-    loop @@print_loop
+    jmp @@next
+
+@@first:
+    xor dx, dx
+    mov si, @database
+
+@@next:
+    jmp @@view_loop
+
+@@exit_view:
+    cls
     ret
 show_table endp
 

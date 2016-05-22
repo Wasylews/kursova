@@ -66,6 +66,13 @@ getc macro
 endm
 
 
+; char _getch() -> al
+_getch macro
+    xor ah, ah
+    int 16h
+endm
+
+
 ; char fgetc(FILE handle) -> al
 fgetc proc c
     arg @handle
