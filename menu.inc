@@ -32,7 +32,15 @@ about_info db 'BookShop', ENDL
            db 'Copyright (C) Sabov W.', ENDL, 0
 
 
-table_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
+table_fmt db 'Author: %s', ENDL
+          db 'Title: %s', ENDL
+          db 'Genre: %s', ENDL
+          db 'Publisher: %s', ENDL
+          db 'Year: %s', ENDL
+          db 'Pages count: %s', ENDL
+          db 'Price: %s', ENDL, 0
+
+search_fmt db '%s | %s | %s | %s | %s | %s | %s', ENDL, 0
 
 temp db 80 dup('?')
 
@@ -169,7 +177,7 @@ filter_record proc c
     je @@skip
 
     push si
-    push offset table_fmt
+    push offset search_fmt
     push STDOUT
     call print_record
     add sp, 6
